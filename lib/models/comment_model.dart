@@ -15,7 +15,8 @@ class Comment {
     required this.createdAt,
   });
 
-  Map<String, dynamic> toMap() {
+  // Metode toJson()
+  Map<String, dynamic> toJson() {
     return {
       'id': id,
       'newsId': newsId,
@@ -26,14 +27,20 @@ class Comment {
     };
   }
 
-  factory Comment.fromMap(Map<String, dynamic> map) {
+  // Metode fromJson()
+  factory Comment.fromJson(Map<String, dynamic> json) {
     return Comment(
-      id: map['id'],
-      newsId: map['newsId'],
-      userId: map['userId'],
-      username: map['username'],
-      content: map['content'],
-      createdAt: DateTime.parse(map['createdAt']),
+      id: json['id'],
+      newsId: json['newsId'],
+      userId: json['userId'],
+      username: json['username'],
+      content: json['content'],
+      createdAt: DateTime.parse(json['createdAt']),
     );
   }
+
+  // Metode toMap() dan fromMap()
+  Map<String, dynamic> toMap() => toJson();
+  
+  factory Comment.fromMap(Map<String, dynamic> map) => Comment.fromJson(map);
 }

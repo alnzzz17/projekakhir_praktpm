@@ -11,6 +11,7 @@ class User {
     required this.password,
   });
 
+  // Metode untuk konversi ke Map
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -20,6 +21,7 @@ class User {
     };
   }
 
+  // Metode untuk konversi dari Map
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
       id: map['id'],
@@ -28,4 +30,10 @@ class User {
       password: map['password'],
     );
   }
+
+  // Metode toJson()
+  Map<String, dynamic> toJson() => toMap();
+
+  // Metode fromJson()
+  factory User.fromJson(Map<String, dynamic> json) => User.fromMap(json);
 }
