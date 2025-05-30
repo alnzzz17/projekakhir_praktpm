@@ -13,6 +13,9 @@ class SharedPrefsService {
   late SharedPreferences _prefs;
   bool _isInitialized = false;
 
+  // Tambahkan getter publik untuk _prefs
+  SharedPreferences get prefs => _prefs;
+
   Future<void> init() async {
     if (!_isInitialized) {
       _prefs = await SharedPreferences.getInstance();
@@ -20,7 +23,7 @@ class SharedPrefsService {
     }
   }
 
-  // User methods
+  // User methods (menyimpan satu current user)
   Future<void> saveUser(User user) async {
     try {
       await init();
@@ -52,7 +55,7 @@ class SharedPrefsService {
     }
   }
 
-  // Comments methods
+  // Comments methods (menyimpan daftar komentar per newsId)
   Future<void> saveComments(String newsId, List<Comment> comments) async {
     try {
       await init();
@@ -77,7 +80,7 @@ class SharedPrefsService {
     }
   }
 
-  // Tambahkan metode untuk operasi individual comment
+  // Metode untuk operasi individual comment
   Future<void> addComment(String newsId, Comment comment) async {
     final comments = await getComments(newsId);
     comments.add(comment);

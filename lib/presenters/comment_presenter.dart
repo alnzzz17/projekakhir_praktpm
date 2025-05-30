@@ -1,60 +1,43 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/material.dart';
 import 'package:projekakhir_praktpm/models/comment_model.dart';
+import 'package:projekakhir_praktpm/utils/shared_prefs.dart';
 
-class CommentPresenter {
-  final SharedPreferences prefs;
-
-  CommentPresenter(this.prefs);
+class CommentPresenter extends ChangeNotifier {
+  CommentPresenter();
 
   Future<List<Comment>> getCommentsByNewsId(String newsId) async {
-    final comments = prefs.getStringList('comments') ?? [];
-    return comments
-        .map((commentString) => Comment.fromMap(Map<String, dynamic>.from(commentString as Map)))
-        .where((comment) => comment.newsId == newsId)
-        .toList();
-  }
-
-  Future<bool> addComment(Comment comment) async {
     try {
-      final comments = prefs.getStringList('comments') ?? [];
-      comments.add(comment.toMap().toString());
-      await prefs.setStringList('comments', comments);
-      return true;
+      final comments = await SharedPrefsService().getComments(newsId);
+      return comments;
     } catch (e) {
-      return false;
+      throw Exception('Failed to load comments: $e');
     }
   }
 
-  Future<bool> updateComment(Comment updatedComment) async {
+  Future<void> addComment(Comment comment) async {
     try {
-      final comments = prefs.getStringList('comments') ?? [];
-      final index = comments.indexWhere((commentString) {
-        final comment = Comment.fromMap(Map<String, dynamic>.from(commentString as Map));
-        return comment.id == updatedComment.id;
-      });
-
-      if (index != -1) {
-        comments[index] = updatedComment.toMap().toString();
-        await prefs.setStringList('comments', comments);
-        return true;
-      }
-      return false;
+      await SharedPrefsService().addComment(comment.newsId, comment);
+      notifyListeners();
     } catch (e) {
-      return false;
+      throw Exception('Failed to add comment: $e');
     }
   }
 
-  Future<bool> deleteComment(String commentId) async {
+  Future<void> updateComment(Comment updatedComment) async {
     try {
-      final comments = prefs.getStringList('comments') ?? [];
-      comments.removeWhere((commentString) {
-        final comment = Comment.fromMap(Map<String, dynamic>.from(commentString as Map));
-        return comment.id == commentId;
-      });
-      await prefs.setStringList('comments', comments);
-      return true;
+      await SharedPrefsService().updateComment(updatedComment.newsId, updatedComment);
+      notifyListeners();
     } catch (e) {
-      return false;
+      throw Exception('Failed to update comment: $e');
+    }
+  }
+
+  Future<void> deleteComment(String newsId, String commentId) async {
+    try {
+      await SharedPrefsService().deleteComment(newsId, commentId);
+      notifyListeners();
+    } catch (e) {
+      throw Exception('Failed to delete comment: $e');
     }
   }
 }

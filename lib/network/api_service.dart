@@ -1,29 +1,46 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:projekakhir_praktpm/network/api_constants.dart';
+import 'package:projekakhir_praktpm/models/news_model.dart';
 
 class NewsApi {
-  Future<Map<String, dynamic>> searchNews(String query) async {
+  Future<List<News>> searchNews(String query) async {
     final response = await http.get(
       Uri.parse('${ApiConstants.baseUrl}/everything?q=$query&apiKey=${ApiConstants.apiKey}'),
     );
 
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      final data = json.decode(response.body);
+      if (data['status'] == 'ok' && data['articles'] != null) {
+        final articles = data['articles'] as List;
+        return articles.map((article) => News.fromJson(article)).toList();
+      } else {
+        throw Exception('API Error: ${data['message'] ?? 'Unknown error'} (Status Code: ${response.statusCode})');
+      }
     } else {
-      throw Exception('Failed to load top headlines');
+      throw Exception('Failed to load news: HTTP Status Code ${response.statusCode}');
     }
   }
 
-  Future<Map<String, dynamic>> getNewsByCategory(String category) async {
+  Future<List<News>> getNewsByCategory(String category) async {
     final response = await http.get(
       Uri.parse('${ApiConstants.baseUrl}/top-headlines?category=$category&apiKey=${ApiConstants.apiKey}'),
     );
 
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      final data = json.decode(response.body);
+      if (data['status'] == 'ok' && data['articles'] != null) {
+        final articles = data['articles'] as List;
+        return articles.map((article) => News.fromJson(article)).toList();
+      } else {
+        throw Exception('API Error: ${data['message'] ?? 'Unknown error'} (Status Code: ${response.statusCode})');
+      }
     } else {
-      throw Exception('Failed to load news by category');
+      throw Exception('Failed to load news by category: HTTP Status Code ${response.statusCode}');
     }
+  }
+
+  Future<List<News>> getTopHeadlines() async {
+    return getNewsByCategory('general');
   }
 }
