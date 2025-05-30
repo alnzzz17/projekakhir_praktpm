@@ -45,3 +45,27 @@ class News {
     };
   }
 }
+
+class Bookmark {
+  final String userId;
+  final News news;
+
+  Bookmark({
+    required this.userId,
+    required this.news,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'userId': userId,
+      'news': news.toJson(),
+    };
+  }
+
+  factory Bookmark.fromJson(Map<String, dynamic> json) {
+    return Bookmark(
+      userId: json['userId'],
+      news: News.fromJson(json['news']),
+    );
+  }
+}

@@ -59,8 +59,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'News App with Comments',
-      debugShowCheckedModeBanner: false,
+      title: AppConstants.appName, // Mengambil nama aplikasi dari konstanta
+      debugShowCheckedModeBanner: false, // Menghilangkan banner debug di pojok kanan atas
+
+      // Definisi tema aplikasi
       theme: ThemeData(
         // primarySwatch biasanya digunakan untuk menghasilkan berbagai shade warna material
         // Tapi kita bisa menimpa warna di AppBarTheme untuk kontrol lebih halus dengan warna custom
