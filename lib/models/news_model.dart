@@ -21,14 +21,27 @@ class News {
 
   factory News.fromJson(Map<String, dynamic> json) {
     return News(
-      source: json['source']['name'] ?? 'Unknown',
+      source: json['source'] != null && json['source']['name'] != null ? json['source']['name'] : 'Unknown',
       author: json['author'] ?? 'Unknown',
       title: json['title'] ?? '',
       description: json['description'] ?? '',
       url: json['url'] ?? '',
       urlToImage: json['urlToImage'] ?? '',
-      publishedAt: DateTime.parse(json['publishedAt']),
+      publishedAt: DateTime.tryParse(json['publishedAt'] ?? '') ?? DateTime.now(), 
       content: json['content'] ?? '',
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'source': {'name': source}, 
+      'author': author,
+      'title': title,
+      'description': description,
+      'url': url,
+      'urlToImage': urlToImage,
+      'publishedAt': publishedAt.toIso8601String(),
+      'content': content,
+    };
   }
 }

@@ -1,56 +1,82 @@
-import 'package:shared_preferences/shared_preferences.dart';
-
+import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:projekakhir_praktpm/models/user_model.dart';
+import 'package:projekakhir_praktpm/utils/shared_prefs.dart';
 
-class UserPresenter {
-  final SharedPreferences prefs;
+class UserPresenter extends ChangeNotifier {
+  UserPresenter();
 
-  UserPresenter(this.prefs);
+  User? _currentUser;
+  User? get currentUser => _currentUser;
 
-  Future<bool> register(User user) async {
+  Future<void> register(User user) async {
     try {
-      // Simpan user ke SharedPreferences
-      final users = prefs.getStringList('users') ?? [];
-      users.add(user.toMap().toString());
-      await prefs.setStringList('users', users);
-      return true;
+      await SharedPrefsService().init();
+
+      final usersJsonStrings = SharedPrefsService().prefs.getStringList('all_registered_users') ?? [];
+      List<User> users = usersJsonStrings.map((s) => User.fromJson(jsonDecode(s))).toList();
+
+      if (users.any((u) => u.username == user.username || u.email == user.email)) {
+        throw Exception('Username or email already exists.');
+      }
+
+      users.add(user);
+      final updatedUsersJsonStrings = users.map((u) => jsonEncode(u.toJson())).toList();
+      await SharedPrefsService().prefs.setStringList('all_registered_users', updatedUsersJsonStrings);
+
+      await SharedPrefsService().saveUser(user);
+      _currentUser = user;
+      notifyListeners();
     } catch (e) {
-      return false;
+      throw Exception('Registration failed: $e');
     }
   }
 
   Future<User?> login(String email, String password) async {
-    final users = prefs.getStringList('users') ?? [];
-    for (var userString in users) {
-      final userMap = Map<String, dynamic>.from(userString as Map);
-      final user = User.fromMap(userMap);
-      if (user.email == email && user.password == password) {
-        // Simpan status login
-        await prefs.setBool('isLoggedIn', true);
-        await prefs.setString('currentUserId', user.id);
-        await prefs.setString('currentUsername', user.username);
-        return user;
+    try {
+      await SharedPrefsService().init();
+      final usersJsonStrings = SharedPrefsService().prefs.getStringList('all_registered_users') ?? [];
+      final List<User> users = usersJsonStrings.map((s) => User.fromJson(jsonDecode(s))).toList();
+
+      User? foundUser;
+      for (var user in users) {
+        if (user.email == email && user.password == password) {
+          foundUser = user;
+          break;
+        }
       }
+
+      if (foundUser != null) {
+        await SharedPrefsService().saveUser(foundUser);
+        _currentUser = foundUser;
+        notifyListeners();
+        return foundUser;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      throw Exception('Login failed: $e');
     }
-    return null;
   }
 
-  Future<bool> logout() async {
-    await prefs.setBool('isLoggedIn', false);
-    await prefs.remove('currentUserId');
-    await prefs.remove('currentUsername');
-    return true;
+  Future<void> logout() async {
+    try {
+      await SharedPrefsService().logout();
+      _currentUser = null;
+      notifyListeners();
+    } catch (e) {
+      throw Exception('Logout failed: $e');
+    }
   }
 
-  Future<bool> isLoggedIn() async {
-    return prefs.getBool('isLoggedIn') ?? false;
-  }
-
-  Future<String?> getCurrentUserId() async {
-    return prefs.getString('currentUserId');
-  }
-
-  Future<String?> getCurrentUsername() async {
-    return prefs.getString('currentUsername');
+  Future<User?> getLoggedInUser() async {
+    try {
+      await SharedPrefsService().init();
+      _currentUser = await SharedPrefsService().getCurrentUser();
+      return _currentUser;
+    } catch (e) {
+      print('Error getting logged in user: $e');
+      return null;
+    }
   }
 }

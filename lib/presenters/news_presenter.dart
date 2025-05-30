@@ -1,28 +1,61 @@
+import 'package:flutter/material.dart';
 import 'package:projekakhir_praktpm/network/api_service.dart';
 import 'package:projekakhir_praktpm/models/news_model.dart';
 
-class NewsPresenter {
+class NewsPresenter extends ChangeNotifier {
   final NewsApi newsApi;
+  List<News> _newsList = [];
+  bool _isLoading = false;
+  String? _errorMessage;
 
   NewsPresenter(this.newsApi);
 
-  Future<List<News>> searchNews(String query) async {
+  List<News> get newsList => _newsList;
+  bool get isLoading => _isLoading;
+  String? get errorMessage => _errorMessage;
+
+  Future<void> searchNews(String query) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
     try {
-      final response = await newsApi.searchNews(query);
-      final articles = response['articles'] as List;
-      return articles.map((article) => News.fromJson(article)).toList();
+      _newsList = await newsApi.searchNews(query);
     } catch (e) {
-      throw Exception('Failed to search news: $e');
+      _errorMessage = 'Failed to search news: $e';
+      _newsList = [];
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
-  Future<List<News>> getNewsByCategory(String category) async {
+  Future<void> getNewsByCategory(String category) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
     try {
-      final response = await newsApi.getNewsByCategory(category);
-      final articles = response['articles'] as List;
-      return articles.map((article) => News.fromJson(article)).toList();
+      _newsList = await newsApi.getNewsByCategory(category);
     } catch (e) {
-      throw Exception('Failed to load news by category: $e');
+      _errorMessage = 'Failed to load news by category: $e';
+      _newsList = [];
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getAllNews() async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+    try {
+      _newsList = await newsApi.getTopHeadlines();
+    } catch (e) {
+      _errorMessage = 'Failed to load all news: $e';
+      _newsList = [];
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 }
