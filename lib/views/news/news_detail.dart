@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -55,6 +56,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
         : false;
 
     return Scaffold(
+      backgroundColor: AppColors.primaryColor, 
       appBar: AppBar(
         title: const Text('Detail Berita'),
         actions: [
@@ -99,7 +101,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                 Text(
                   widget.news.source,
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        color: AppColors.secondaryTextColor,
+                        color: AppColors.accentColor,
                         fontWeight: FontWeight.bold,
                       ),
                 ),
@@ -107,28 +109,34 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                   DateFormat('dd MMM. HH:mm').format(widget.news.publishedAt),
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         color: AppColors.secondaryTextColor,
+                        fontStyle: FontStyle.italic,
                       ),
                 ),
               ],
             ),
             const SizedBox(height: AppPadding.mediumPadding),
-            if (widget.news.urlToImage.isNotEmpty)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(AppPadding.smallPadding),
-                child: Image.network(
-                  widget.news.urlToImage,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      height: 200,
-                      color: AppColors.softGrey,
-                      child: Icon(Icons.image_not_supported, 
-                          color: AppColors.hintColor, size: 50),
-                    );
-                  },
-                ),
-              ),
+            
+            ClipRRect(
+              borderRadius: BorderRadius.circular(AppPadding.smallPadding),
+              child: widget.news.urlToImage.isNotEmpty
+                  ? Image.network(
+                      widget.news.urlToImage,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Image.asset( 
+                          'assets/images/noCover.jpg',
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    )
+                  : Image.asset( 
+                      'assets/images/noCover.jpg',
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+            ),
             const SizedBox(height: AppPadding.mediumPadding),
             Text(
               widget.news.description.isNotEmpty 

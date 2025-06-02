@@ -37,7 +37,23 @@ class ProfileScreen extends StatelessWidget {
                     onPressed: () {
                       Navigator.pushReplacementNamed(context, '/login');
                     },
-                    child: const Text('Login Sekarang'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.accentColor,
+                      foregroundColor: AppColors.primaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppPadding.tinyPadding),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: AppPadding.largePadding, vertical: AppPadding.mediumPadding),
+                      elevation: 0,
+                      minimumSize: const Size.fromHeight(50),
+                    ),
+                    child: const Text(
+                      'Login Sekarang',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -106,17 +122,49 @@ class ProfileScreen extends StatelessWidget {
                   bool confirmLogout = await showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: const Text('Konfirmasi Logout'),
-                      content: const Text('Apakah Anda yakin ingin keluar?'),
+                      backgroundColor: AppColors.primaryColor, // Background card AlertDialog
+                      shape: RoundedRectangleBorder( // Bentuk AlertDialog
+                        borderRadius: BorderRadius.circular(AppPadding.smallPadding),
+                      ),
+                      title: Text(
+                        'Konfirmasi Logout',
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                              color: AppColors.textColor, // Warna teks judul
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      content: Text(
+                        'Apakah Anda yakin ingin keluar?',
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              color: AppColors.secondaryTextColor, // Warna teks konten
+                            ),
+                      ),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(false),
-                          child: const Text('Batal'),
+                          child: Text(
+                            'Batal',
+                            style: TextStyle(color: AppColors.textColor), // Warna teks tombol Batal
+                          ),
                         ),
                         ElevatedButton(
                           onPressed: () => Navigator.of(context).pop(true),
-                          child: const Text('Logout'),
-                          style: ElevatedButton.styleFrom(backgroundColor: AppColors.dangerColor),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.dangerColor,
+                            foregroundColor: AppColors.textColor, // Pastikan teks tombol juga putih
+                            shape: RoundedRectangleBorder( // Radius tombol
+                              borderRadius: BorderRadius.circular(AppPadding.tinyPadding),
+                            ),
+                            elevation: 0, // Hilangkan shadow
+                          ),
+                          child: Text(
+                            'Logout',
+                            style: TextStyle(
+                                color: AppColors.textColor, 
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -124,16 +172,26 @@ class ProfileScreen extends StatelessWidget {
 
                   if (confirmLogout) {
                     await userPresenter.logout();
-                    // Setelah logout, arahkan ke halaman login
                     Navigator.of(context).pushReplacementNamed('/login');
                   }
                 },
                 icon: const Icon(Icons.logout),
-                label: const Text('Logout'),
+                label: Text(
+                  'Logout',
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                    color: AppColors.textColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.dangerColor,
-                  foregroundColor: AppColors.primaryColor,
+                  foregroundColor: AppColors.textColor,
                   minimumSize: const Size.fromHeight(50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppPadding.tinyPadding),
+                  ),
+                  elevation: 0,
                 ),
               ),
             ],

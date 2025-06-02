@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:projekakhir_praktpm/presenters/bookmark_presenter.dart';
-import 'package:projekakhir_praktpm/presenters/user_presenter.dart'; // Untuk mengecek status login
+import 'package:projekakhir_praktpm/presenters/user_presenter.dart'; 
 import 'package:projekakhir_praktpm/utils/constants.dart';
-import 'package:projekakhir_praktpm/views/news/news_list.dart'; // Menggunakan NewsCard dari sini
+import 'package:projekakhir_praktpm/views/news/news_list.dart'; 
 
 class BookmarkListScreen extends StatefulWidget {
   const BookmarkListScreen({super.key});
@@ -23,6 +23,7 @@ class _BookmarkListScreenState extends State<BookmarkListScreen> {
     }
 
     return Scaffold(
+      backgroundColor: AppColors.primaryColor, 
       body: Consumer<BookmarkPresenter>(
         builder: (context, bookmarkPresenter, child) {
           final userBookmarks =
@@ -56,7 +57,7 @@ class _BookmarkListScreenState extends State<BookmarkListScreen> {
               'Anda harus login untuk melihat berita favorit.',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                    color: AppColors.secondaryTextColor,
+                    color: AppColors.textColor, 
                   ),
             ),
             const SizedBox(height: AppPadding.mediumPadding),
@@ -64,7 +65,23 @@ class _BookmarkListScreenState extends State<BookmarkListScreen> {
               onPressed: () {
                 Navigator.pushReplacementNamed(context, '/login');
               },
-              child: const Text('Login Sekarang'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.accentColor, 
+                foregroundColor: AppColors.primaryColor, 
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppPadding.tinyPadding), 
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: AppPadding.largePadding, vertical: AppPadding.mediumPadding),
+                elevation: 0, 
+                minimumSize: const Size.fromHeight(50), 
+              ),
+              child: const Text(
+                'Login Sekarang',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         ),
@@ -83,7 +100,7 @@ class _BookmarkListScreenState extends State<BookmarkListScreen> {
             'Belum ada berita yang Anda favoritkan.',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                  color: AppColors.secondaryTextColor,
+                  color: AppColors.textColor, 
                 ),
           ),
           const SizedBox(height: AppPadding.smallPadding),
@@ -91,7 +108,7 @@ class _BookmarkListScreenState extends State<BookmarkListScreen> {
             'Anda bisa menambahkan berita ke favorit dari halaman detail berita.',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  color: AppColors.hintColor,
+                  color: AppColors.secondaryTextColor, 
                 ),
           ),
         ],

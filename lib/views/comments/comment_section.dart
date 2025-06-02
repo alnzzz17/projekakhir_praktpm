@@ -41,7 +41,6 @@ class _CommentSectionState extends State<CommentSection> {
     try {
       final commentPresenter = Provider.of<CommentPresenter>(context, listen: false);
       final comments = await commentPresenter.getCommentsByNewsId(widget.newsId);
-      // Urutkan komentar terbaru (paling atas)
       comments.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       setState(() {
         _comments = comments;
@@ -102,16 +101,45 @@ class _CommentSectionState extends State<CommentSection> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Edit Komentar'),
+          backgroundColor: AppColors.primaryColor, 
+          shape: RoundedRectangleBorder( 
+            borderRadius: BorderRadius.circular(AppPadding.smallPadding),
+          ),
+          title: Text(
+            'Edit Komentar',
+            style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                  color: AppColors.textColor, 
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          
           content: TextField(
             controller: editController,
             maxLines: null,
-            decoration: const InputDecoration(hintText: 'Edit komentar Anda'),
+            style: TextStyle(color: AppColors.textColor), 
+            decoration: InputDecoration(
+              hintText: 'Edit komentar Anda',
+              hintStyle: TextStyle(color: AppColors.hintColor),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: AppColors.softGrey),
+              ),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: AppColors.accentColor, width: 2),
+              ),
+              border: UnderlineInputBorder( // Default border
+                borderSide: BorderSide(color: AppColors.softGrey),
+              ),
+              filled: true,
+              fillColor: AppColors.primaryColor, 
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Batal'),
+              child: Text(
+                'Batal',
+                style: TextStyle(color: AppColors.textColor), 
+              ),
             ),
             ElevatedButton(
               onPressed: () {
@@ -121,7 +149,22 @@ class _CommentSectionState extends State<CommentSection> {
                   _showErrorSnackbar('Komentar tidak boleh kosong.');
                 }
               },
-              child: const Text('Simpan'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.accentColor, 
+                foregroundColor: AppColors.primaryColor, 
+                shape: RoundedRectangleBorder( 
+                  borderRadius: BorderRadius.circular(AppPadding.tinyPadding),
+                ),
+                elevation: 0, // Hilangkan shadow
+              ),
+              child: Text(
+                'Simpan',
+                style: TextStyle(
+                    color: AppColors.primaryColor, 
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                ),
+              ),
             ),
           ],
         );
@@ -154,17 +197,49 @@ class _CommentSectionState extends State<CommentSection> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Hapus Komentar'),
-          content: const Text('Apakah Anda yakin ingin menghapus komentar ini?'),
+          backgroundColor: AppColors.primaryColor, 
+          shape: RoundedRectangleBorder( 
+            borderRadius: BorderRadius.circular(AppPadding.smallPadding),
+          ),
+          title: Text(
+            'Hapus Komentar',
+            style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                  color: AppColors.textColor, 
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          content: Text(
+            'Apakah Anda yakin ingin menghapus komentar ini?',
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  color: AppColors.secondaryTextColor,
+                ),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Batal'),
+              child: Text(
+                'Batal',
+                style: TextStyle(color: AppColors.textColor), 
+              ),
             ),
             ElevatedButton(
               onPressed: () => Navigator.of(context).pop(true),
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.dangerColor),
-              child: const Text('Hapus'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.dangerColor,
+                foregroundColor: AppColors.textColor, 
+                shape: RoundedRectangleBorder( 
+                  borderRadius: BorderRadius.circular(AppPadding.tinyPadding),
+                ),
+                elevation: 0, 
+              ),
+              child: Text(
+                'Hapus',
+                style: TextStyle(
+                    color: AppColors.textColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                ),
+              ),
             ),
           ],
         );
@@ -222,8 +297,26 @@ class _CommentSectionState extends State<CommentSection> {
         // Input Komentar
         TextField(
           controller: _commentController,
+          style: TextStyle(color: AppColors.textColor, fontSize: 14.0), 
           decoration: InputDecoration(
             hintText: 'Tambahkan komentar...',
+            hintStyle: TextStyle(color: AppColors.hintColor), 
+            prefixIcon: const Icon(Icons.comment, color: AppColors.hintColor, size: 20.0), 
+            // Mengubah border menjadi UnderlineInputBorder
+            border: UnderlineInputBorder(
+              borderSide: BorderSide(color: AppColors.softGrey),
+            ),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: AppColors.softGrey),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: AppColors.accentColor, width: 2),
+            ),
+            filled: true,
+            fillColor: AppColors.primaryColor, 
+            focusColor: AppColors.primaryColor,
+            hoverColor: AppColors.primaryColor,
+            labelStyle: TextStyle(color: AppColors.hintColor, fontSize: 12.0), 
             suffixIcon: _isAddingComment
                 ? const Padding(
                     padding: EdgeInsets.all(AppPadding.smallPadding),
@@ -265,8 +358,11 @@ class _CommentSectionState extends State<CommentSection> {
                       final bool isMyComment = currentUser != null && currentUser.id == comment.userId;
                       return Card(
                         margin: const EdgeInsets.only(bottom: AppPadding.smallPadding),
-                        color: AppColors.softGrey,
+                        color: AppColors.primaryColor, 
                         elevation: 1,
+                        shape: RoundedRectangleBorder( 
+                          borderRadius: BorderRadius.circular(AppPadding.smallPadding),
+                        ),
                         child: Padding(
                           padding: const EdgeInsets.all(AppPadding.smallPadding),
                           child: Column(
@@ -279,13 +375,14 @@ class _CommentSectionState extends State<CommentSection> {
                                     comment.username,
                                     style: Theme.of(context).textTheme.titleSmall!.copyWith(
                                           fontWeight: FontWeight.bold,
-                                          color: AppColors.textColor,
+                                          color: AppColors.accentColor, 
                                         ),
                                   ),
                                   Text(
                                     DateFormat('dd MMM. HH:mm').format(comment.createdAt),
                                     style: Theme.of(context).textTheme.bodySmall!.copyWith(
                                           color: AppColors.secondaryTextColor,
+                                          fontStyle: FontStyle.italic, 
                                         ),
                                   ),
                                 ],

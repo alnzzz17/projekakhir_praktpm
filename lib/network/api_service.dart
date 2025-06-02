@@ -1,12 +1,13 @@
+// lib/network/api_service.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:projekakhir_praktpm/network/api_constants.dart';
 import 'package:projekakhir_praktpm/models/news_model.dart';
 
 class NewsApi {
-  Future<List<News>> searchNews(String query) async {
+  Future<List<News>> searchNews(String query, {int page = 1, int pageSize = 20}) async {
     final response = await http.get(
-      Uri.parse('${ApiConstants.baseUrl}/everything?q=$query&apiKey=${ApiConstants.apiKey}'),
+      Uri.parse('${ApiConstants.baseUrl}/everything?q=$query&page=$page&pageSize=$pageSize&apiKey=${ApiConstants.apiKey}'),
     );
 
     if (response.statusCode == 200) {
@@ -22,9 +23,9 @@ class NewsApi {
     }
   }
 
-  Future<List<News>> getNewsByCategory(String category) async {
+  Future<List<News>> getNewsByCategory(String category, {int page = 1, int pageSize = 20}) async {
     final response = await http.get(
-      Uri.parse('${ApiConstants.baseUrl}/top-headlines?category=$category&apiKey=${ApiConstants.apiKey}'),
+      Uri.parse('${ApiConstants.baseUrl}/top-headlines?category=$category&page=$page&pageSize=$pageSize&apiKey=${ApiConstants.apiKey}'),
     );
 
     if (response.statusCode == 200) {
@@ -40,7 +41,7 @@ class NewsApi {
     }
   }
 
-  Future<List<News>> getTopHeadlines() async {
-    return getNewsByCategory('general');
+  Future<List<News>> getTopHeadlines({int page = 1, int pageSize = 20}) async {
+    return getNewsByCategory('general', page: page, pageSize: pageSize);
   }
 }

@@ -1,0 +1,2 @@
+C:/Kuliah/Semester 6/Prak Mobile/projekAkhir/projekakhir_praktpm/android/app/.cxx/Debug/1f5x2x1c/x86_64/CMakeFiles/edit_cache.dir
+C:/Kuliah/Semester 6/Prak Mobile/projekAkhir/projekakhir_praktpm/android/app/.cxx/Debug/1f5x2x1c/x86_64/CMakeFiles/rebuild_cache.dir

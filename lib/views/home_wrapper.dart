@@ -31,51 +31,91 @@ class _HomeWrapperState extends State<HomeWrapper> {
   @override
   Widget build(BuildContext context) {
     final userPresenter = context.watch<UserPresenter>();
-    final currentUser = userPresenter.currentUser;
+   
 
     return Scaffold(
+      backgroundColor: AppColors.primaryColor,
       appBar: AppBar(
-        title: Text(_selectedIndex == 0
-            ? AppConstants.appName
-            : _selectedIndex == 1
-                ? 'Berita Favorit' 
-                : 'Profil Pengguna'),
-        actions: [
-          if (currentUser != null && _selectedIndex == 2) 
-            IconButton(
-              icon: const Icon(Icons.logout),
-              tooltip: 'Logout',
-              onPressed: () async {
-                await userPresenter.logout();
-                Navigator.of(context).pushReplacementNamed('/login');
-              },
+        automaticallyImplyLeading: false, 
+        title: Row( 
+          mainAxisSize: MainAxisSize.min, 
+          children: [
+            Image.asset(
+              'assets/logo/logo2.jpg',
+              height: 40, 
+              width: 40,  
             ),
-        ],
+            const SizedBox(width: AppPadding.smallPadding), 
+            Text(
+              _selectedIndex == 0
+                  ? 'Dashboard' 
+                  : _selectedIndex == 1
+                      ? 'Berita Favorit' 
+                      : 'Profil Pengguna',
+              style: TextStyle(color: AppColors.textColor),
+            ),
+          ],
+        ),
+        backgroundColor: AppColors.primaryColor,
+        foregroundColor: AppColors.textColor,
+        elevation: 0,
       ),
       body: IndexedStack( 
         index: _selectedIndex,
         children: _pages,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Beranda',
+      bottomNavigationBar: _buildCustomBottomNavBar(), 
+    );
+  }
+
+  Widget _buildCustomBottomNavBar() {
+    return BottomAppBar(
+      color: Colors.transparent,
+      elevation: 0,
+      child: ClipRRect(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(25.0)),
+        child: Container(
+          height: 60,
+          color: AppColors.primaryColor,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildNavBarItem(0, Icons.list_alt, 'Beranda'),
+              _buildNavBarItem(1, Icons.folder, 'Favorit'),
+              _buildNavBarItem(2, Icons.person, 'Profil'),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bookmark),
-            label: 'Favorit',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profil',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: AppColors.accentColor, 
-        unselectedItemColor: AppColors.hintColor, 
-        backgroundColor: AppColors.primaryColor, 
-        onTap: _onItemTapped, 
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavBarItem(int index, IconData icon, String label) {
+    final bool isSelected = _selectedIndex == index;
+    return Expanded(
+      child: InkWell(
+        onTap: () => _onItemTapped(index),
+        highlightColor: Colors.transparent,
+        splashColor: AppColors.accentColor.withOpacity(0.2),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              color: isSelected ? AppColors.accentColor : AppColors.hintColor,
+              size: isSelected ? 28 : 24,
+            ),
+            Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? AppColors.accentColor : AppColors.secondaryTextColor,
+                fontSize: 11,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
